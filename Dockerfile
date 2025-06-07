@@ -1,21 +1,17 @@
 FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install Python & Playwright dependencies (cached if requirements.txt unchanged)
+COPY requirements.txt .
+RUN npm install $(cat requirements.txt | tr '\n' ' ')
 
-# Install dependencies
-RUN npm ci --only=production
+# Install Playwright separately and cache it
+RUN npx playwright install --with-deps
 
-# Copy source code
+# Copy remaining app files (only triggers rebuild if files changed)
 COPY . .
 
-# Build TypeScript
-RUN npm run build
-
-# Expose port (Railway will set PORT env var)
-EXPOSE $PORT
-
-# Start the application
-CMD ["npm", "start"]
+# Start script
+CMD ["bash", "-c", "./start.sh"]
