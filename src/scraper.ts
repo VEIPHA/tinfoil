@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { SimpleFilmScraper } from './scraper_logic';
+import { SimpleFilmScraper } from './scraper';
 import { connectDB, saveFilms, getFilmCount } from './database';
 
 async function main() {
