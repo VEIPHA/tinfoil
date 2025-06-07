@@ -1,14 +1,16 @@
 FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Install Python & Playwright dependencies (cached if requirements.txt unchanged)
-COPY requirements.txt .
+# Copy package files and install dependencies
+COPY requirements.txt package.json ./
 RUN npm install $(cat requirements.txt | tr '\n' ' ')
 
-# Copy remaining app files (only triggers rebuild if files changed)
+# Copy remaining app files
 COPY . .
 
-# Start script
-CMD ["bash", "-c", "./start.sh"]
+# Make start.sh executable
+RUN chmod +x start.sh
+
+# Start script - use sh instead of bash (alpine doesn't have bash)
+CMD ["sh", "./start.sh"]
